@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #17222B;
+  --color-teal: #0F766E;
+  --color-teal-dark: #115E59;
+  --color-sand: #F7F6F2;
+  --color-mist: #EEF6F4;
+  --color-gold-dark: #8A6420;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Manrope", system-ui, sans-serif;
+  --shadow-card: 0 10px 35px rgba(23, 34, 43, 0.07);
+  --shadow-soft: 0 18px 50px rgba(23, 34, 43, 0.08);
+}
+
+html { scroll-behavior: smooth; scroll-padding-top: 90px; background-color: #fff; }
+body { font-family: var(--font-sans); }
+h1, h2, h3, h4 { font-family: var(--font-display); }
+button { cursor: pointer; }
+
+.hero-grid {
+  background-image: linear-gradient(rgba(15, 118, 110, .045) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 118, 110, .045) 1px, transparent 1px);
+  background-size: 38px 38px;
+}
+.focus-ring:focus-visible { outline: 3px solid rgba(15, 118, 110, .35); outline-offset: 3px; }
+.review-track { transition: transform .45s ease; }
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* Scroll reveal start state. Only applied when JS is on, so no-JS visitors still see everything. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal-item] { opacity: 0; transform: translateY(24px); }
+  .hero-in { animation: hero-in .8s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(var(--i, 0) * 80ms); }
+}
+@keyframes hero-in { from { opacity: 0; transform: translate3d(0, 20px, 0); } to { opacity: 1; transform: none; } }
+
+/* Hover lift (cards + buttons) */
+.lift { position: relative; }
+.lift::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; box-shadow: 0 10px 35px rgba(23, 34, 43, .07); opacity: 0; pointer-events: none; }
+@media (hover: hover) {
+  .lift::after { transition: opacity .3s ease; }
+  .lift:hover::after { opacity: 1; }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .lift { transition: transform .35s cubic-bezier(.22, 1, .36, 1); }
+  .lift:hover { transform: translate3d(0, -4px, 0); }
+  .btn-lift { transition: transform .25s cubic-bezier(.22, 1, .36, 1); }
+  .btn-lift:hover { transform: translate3d(0, -2px, 0); }
+  .btn-lift:active { transform: none; }
+}
+
+/* Typing headline: ghosts reserve the space of the longest phrase so nothing jumps. */
+.type-wrap { display: grid; }
+.type-wrap > * { grid-area: 1 / 1; }
+.type-ghost { visibility: hidden; pointer-events: none; }
+.type-caret { display: inline-block; width: .07em; height: .9em; margin-left: .06em; background: currentColor; vertical-align: -.08em; border-radius: 2px; animation: caret 1s steps(1) infinite; }
+@keyframes caret { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
+
+/* Pulsing "open" dot */
+.live-dot { position: relative; }
+.live-dot::after { content: ""; position: absolute; inset: 0; border-radius: 9999px; background: inherit; animation: ping 1.8s cubic-bezier(0, 0, .2, 1) infinite; }
+@keyframes ping { 75%, 100% { transform: scale(2.4); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .type-caret, .live-dot::after { animation: none; }
+  .js [data-reveal-item] { opacity: 1; transform: none; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

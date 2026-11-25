@@ -1,0 +1,19 @@
+---
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Treatments from "../components/Treatments.astro";
+import FinalCta from "../components/FinalCta.astro";
+import Footer from "../components/Footer.astro";
+import { site } from "../data/site";
+---
+<Base
+  title={`Treatments | ${site.brand}, Dhaka`}
+  ogTitle={`Treatments | ${site.brand}`}
+>
+  <Header />
+  <main id="main">
+    <Treatments headingLevel="h1" />
+    <FinalCta text={site.cta.textTreatments} />
+  </main>
+  <Footer />
+</Base>

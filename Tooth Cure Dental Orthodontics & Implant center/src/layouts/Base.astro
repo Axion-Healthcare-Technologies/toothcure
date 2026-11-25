@@ -1,0 +1,105 @@
+---
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+import { site } from "../data/site";
+
+interface Props { title?: string; ogTitle?: string; description?: string; ogDescription?: string; noindex?: boolean }
+const {
+  title = site.seo.title,
+  ogTitle = title,
+  description = site.seo.description,
+  ogDescription = site.seo.ogDescription,
+  noindex = false,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL("/images/og-share.jpg", Astro.site).href;
+const fonts = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap";
+const ld = {
+  "@context": "https://schema.org",
+  "@type": "Dentist",
+  name: site.brand,
+  description: site.seo.schemaDescription,
+  url: site.url,
+  image: ogImage,
+  address: { "@type": "PostalAddress", addressLocality: "Dhaka", addressRegion: "Dhaka", addressCountry: "BD" },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+      opens: "17:00",
+      closes: "21:00",
+    },
+  ],
+  areaServed: [{ "@type": "Place", name: "Dhaka" }],
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>document.documentElement.classList.add("js");</script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={noindex ? "noindex,follow" : "index,follow"} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.brand} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={ogDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={site.brand} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={ogTitle} />
+    <meta name="twitter:description" content={ogDescription} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="theme-color" content="#0f766e" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href={fonts} media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href={fonts} /></noscript>
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    <ClientRouter />
+  </head>
+  <body class="bg-white text-ink antialiased">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:left-4 focus:top-4 focus:bg-white focus:px-4 focus:py-3 focus:rounded-xl">Skip to content</a>
+    <slot />
+    <script is:inline>
+      // Fail-safe: if the reveal animation ever fails to start, show the content anyway after 2.5s.
+      (function () {
+        function run() {
+          var els = document.querySelectorAll("[data-reveal-item]");
+          function show(e) { e.style.opacity = 1; e.style.transform = "none"; }
+          if (!("IntersectionObserver" in window)) { els.forEach(show); return; }
+          var io = new IntersectionObserver(function (es) {
+            es.forEach(function (x) {
+              if (!x.isIntersecting) return;
+              io.unobserve(x.target);
+              setTimeout(function () { if (getComputedStyle(x.target).opacity === "0") show(x.target); }, 2500);
+            });
+          });
+          els.forEach(function (e) { io.observe(e); });
+        }
+        // astro:page-load fires on first load and after every client-side navigation.
+        document.addEventListener("astro:page-load", run);
+      })();
+    </script>
+    <script>
+      import Lenis from "lenis";
+      // Smooth scrolling (skipped for reduced-motion). Lenis leaves native touch scrolling alone, so phones stay fast.
+      const w = window as unknown as { __lenis?: Lenis };
+      if (!w.__lenis && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const lenis = new Lenis({ anchors: { offset: -90 } });
+        w.__lenis = lenis;
+        const raf = (t: number) => { lenis.raf(t); requestAnimationFrame(raf); };
+        requestAnimationFrame(raf);
+      }
+    </script>
+  </body>
+</html>

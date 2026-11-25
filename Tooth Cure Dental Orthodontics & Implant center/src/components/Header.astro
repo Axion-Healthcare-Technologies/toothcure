@@ -1,0 +1,60 @@
+---
+import { site, waLink, telHref } from "../data/site";
+const wa = waLink();
+---
+<header class="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur" id="site-header">
+  <nav class="max-w-7xl mx-auto px-5 min-h-[72px] flex items-center justify-between gap-5" aria-label="Primary navigation">
+    <a href="/" class="flex items-center gap-3 focus-ring rounded-xl" aria-label={`${site.short} home`}>
+      <span class="h-10 w-10 rounded-xl bg-teal text-white grid place-items-center font-bold text-lg">A</span>
+      <span>
+        <span class="block font-bold leading-none">{site.short}</span>
+        <span class="block text-[11px] text-slate-500 mt-1 tracking-wide">{site.tagline}</span>
+      </span>
+    </a>
+    <div class="hidden lg:flex items-center gap-7 text-sm font-medium text-slate-600">
+      {site.nav.links.map((l) => <a href={l.href} class="hover:text-teal focus-ring rounded">{l.label}</a>)}
+    </div>
+    <div class="flex items-center gap-2">
+      <a href={telHref} class="btn-lift hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 font-semibold text-sm hover:border-teal hover:text-teal focus-ring">{site.nav.callLabel}</a>
+      <a href={wa} class="btn-lift hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-teal text-white font-semibold text-sm hover:bg-teal-dark focus-ring">{site.nav.whatsappLabel}</a>
+      <button id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu" class="lg:hidden focus-ring h-11 w-11 rounded-xl border border-slate-200 grid place-items-center hover:border-teal">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+          <path id="menuBars" d="M4 7h16M4 12h16M4 17h16"></path>
+          <path id="menuClose" class="hidden" d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+  <div id="mobileMenu" class="lg:hidden hidden border-t border-slate-100 bg-white">
+    <div class="max-w-7xl mx-auto px-5 py-3 grid gap-1">
+      {site.nav.links.map((l) => <a href={l.href} class="mobile-link block rounded-xl px-4 py-3 font-semibold text-slate-700 hover:bg-mist hover:text-teal focus-ring">{l.label}</a>)}
+      <a href={telHref} class="mobile-link mt-1 block rounded-xl border border-slate-200 px-4 py-3 text-center font-bold focus-ring">{site.nav.callLabel}</a>
+      <a href={wa} class="mobile-link mt-1 block rounded-xl bg-teal text-white px-4 py-3 text-center font-bold hover:bg-teal-dark focus-ring">{site.nav.whatsappLabel}</a>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Mobile menu. Re-bound after every client-side navigation (the header is re-rendered).
+  function setMenu(open: boolean) {
+    const btn = document.getElementById("menuToggle");
+    const panel = document.getElementById("mobileMenu");
+    if (!btn || !panel) return;
+    panel.classList.toggle("hidden", !open);
+    btn.setAttribute("aria-expanded", String(open));
+    btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    document.getElementById("menuBars")?.classList.toggle("hidden", open);
+    document.getElementById("menuClose")?.classList.toggle("hidden", !open);
+  }
+
+  function initMenu() {
+    const btn = document.getElementById("menuToggle");
+    const panel = document.getElementById("mobileMenu");
+    if (!btn || !panel) return;
+    btn.addEventListener("click", () => setMenu(panel.classList.contains("hidden")));
+    panel.querySelectorAll<HTMLAnchorElement>(".mobile-link").forEach((a) => a.addEventListener("click", () => setMenu(false)));
+  }
+
+  addEventListener("resize", () => { if (innerWidth >= 1024) setMenu(false); });
+  document.addEventListener("astro:page-load", initMenu);
+</script>

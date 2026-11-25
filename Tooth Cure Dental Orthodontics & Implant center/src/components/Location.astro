@@ -1,0 +1,33 @@
+---
+import Reveal from "./Reveal";
+import Eyebrow from "./Eyebrow.astro";
+import { site, telHref } from "../data/site";
+const { location, contact, brand } = site;
+const map = `https://www.google.com/maps?q=${encodeURIComponent(contact.mapQuery)}&output=embed`;
+---
+<section class="bg-sand">
+  <Reveal client:visible className="max-w-7xl mx-auto px-5 py-20 lg:py-24 grid lg:grid-cols-[.8fr_1.2fr] gap-10 items-center">
+    <div data-reveal-item>
+      <Eyebrow>{location.eyebrow}</Eyebrow>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold">{location.heading}</h2>
+      <p class="mt-4 text-slate-600 leading-7">{location.text}</p>
+      <div class="mt-7 space-y-4">
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-600">Address</p>
+          <p class="font-semibold mt-1">{contact.address}</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-600">Hours</p>
+          <p class="font-semibold mt-1">{contact.days} · {contact.hours}</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-slate-600">Phone</p>
+          <a href={telHref} class="font-semibold mt-1 inline-block hover:text-teal">{contact.phoneDisplay}</a>
+        </div>
+      </div>
+    </div>
+    <div data-reveal-item class="rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-card">
+      <iframe title={`${brand} on Google Maps`} src={map} width="100%" height="420" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </Reveal>
+</section>

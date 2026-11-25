@@ -1,0 +1,26 @@
+---
+import { site, waLink, telHref } from "../data/site";
+const { contact, footer } = site;
+---
+<footer class="bg-slate-950 text-slate-300">
+  <div class="max-w-7xl mx-auto px-5 py-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+    <div>
+      <p class="text-white font-bold text-lg">{site.brand}</p>
+      <p class="mt-3 text-sm leading-6">{footer.tagline}</p>
+    </div>
+    <div>
+      <p class="text-white font-semibold">Contact</p>
+      <p class="mt-3 text-sm">{contact.address}</p>
+      <a href={telHref} class="block mt-2 text-sm hover:text-white">{contact.phoneDisplay}</a>
+      <a href={waLink()} class="block mt-2 text-sm hover:text-white">WhatsApp</a>
+    </div>
+    <div>
+      <p class="text-white font-semibold">Hours</p>
+      <p class="mt-3 text-sm">{contact.days}: {contact.hours}</p>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto px-5 pb-8 pt-2 border-t border-white/10 text-xs leading-6 text-slate-400">
+    <p><strong class="text-slate-300">Medical disclaimer:</strong> {footer.disclaimer}</p>
+    <p class="mt-3">{footer.copyright}</p>
+  </div>
+</footer>

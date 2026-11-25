@@ -1,0 +1,28 @@
+---
+import Reveal from "./Reveal";
+import Eyebrow from "./Eyebrow.astro";
+import { site } from "../data/site";
+const { faq } = site;
+const ld = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.items.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+};
+---
+<section id="faq" class="max-w-4xl mx-auto px-5 py-20 lg:py-24">
+  <Reveal client:visible>
+    <div data-reveal-item class="text-center">
+      <Eyebrow>{faq.eyebrow}</Eyebrow>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold">{faq.heading}</h2>
+    </div>
+    <div data-reveal-item class="mt-10 divide-y divide-slate-200 border-y border-slate-200">
+      {faq.items.map((f) => (
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-5 font-bold focus-ring rounded [&::-webkit-details-marker]:hidden">{f.q}<span class="text-teal text-xl group-open:rotate-45 transition-transform" aria-hidden="true">+</span></summary>
+          <p class="mt-3 text-slate-600 leading-7">{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </Reveal>
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+</section>

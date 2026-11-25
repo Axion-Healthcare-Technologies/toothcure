@@ -1,0 +1,34 @@
+---
+// Pre-optimised AVIF + WebP at 3 widths live in /public/assets/img (name-640.avif, name-960.webp, ...).
+interface Props {
+  name: string;
+  widths: number[];
+  fallbackWidth: number;
+  sizes: string;
+  alt: string;
+  width: number;
+  height: number;
+  eager?: boolean;
+  class?: string;
+  style?: string;
+}
+const { name, widths, fallbackWidth, sizes, alt, width, height, eager = false, class: cls = "", style } = Astro.props;
+const srcset = (ext: "avif" | "webp") => widths.map((w) => `/assets/img/${name}-${w}.${ext} ${w}w`).join(", ");
+---
+<picture>
+  <source type="image/avif" srcset={srcset("avif")} sizes={sizes} />
+  <source type="image/webp" srcset={srcset("webp")} sizes={sizes} />
+  <img
+    src={`/assets/img/${name}-${fallbackWidth}.webp`}
+    srcset={srcset("webp")}
+    sizes={sizes}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={eager ? "eager" : "lazy"}
+    fetchpriority={eager ? "high" : undefined}
+    decoding="async"
+    class={cls}
+    style={style}
+  />
+</picture>

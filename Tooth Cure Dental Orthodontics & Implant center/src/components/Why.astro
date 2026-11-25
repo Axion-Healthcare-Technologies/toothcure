@@ -1,0 +1,62 @@
+---
+import Reveal from "./Reveal";
+import Eyebrow from "./Eyebrow.astro";
+import { site } from "../data/site";
+const { why } = site;
+---
+<section id="why-us" class="max-w-7xl mx-auto px-5 py-20 lg:py-24">
+  <Reveal client:visible>
+    <div data-reveal-item class="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
+      <div>
+        <Eyebrow>{why.eyebrow}</Eyebrow>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold">{why.heading}</h2>
+      </div>
+      <div class="flex gap-2">
+        <button id="prevReview" type="button" aria-label="Previous" class="focus-ring h-11 w-11 rounded-full border border-slate-200 hover:border-teal">←</button>
+        <button id="nextReview" type="button" aria-label="Next" class="focus-ring h-11 w-11 rounded-full border border-slate-200 hover:border-teal">→</button>
+      </div>
+    </div>
+    <div data-reveal-item class="mt-9 overflow-hidden">
+      <div id="reviewTrack" class="review-track flex">
+        {why.items.map((w, i) => (
+          <article class="review-slide min-w-full md:min-w-[50%] lg:min-w-[33.333%] p-1.5">
+            <div class="h-full rounded-3xl border border-slate-200 p-6">
+              <span class="h-11 w-11 rounded-2xl bg-mist grid place-items-center text-teal font-bold">{String(i + 1).padStart(2, "0")}</span>
+              <h3 class="mt-5 text-xl font-bold">{w.title}</h3>
+              <p class="mt-2 text-slate-600 leading-7">{w.text}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </Reveal>
+</section>
+
+<script>
+  // Carousel: 3 cards visible on desktop, 2 on tablet, 1 on phones.
+  let index = 0;
+
+  const visible = () => (innerWidth >= 1024 ? 3 : innerWidth >= 768 ? 2 : 1);
+
+  function render() {
+    const track = document.getElementById("reviewTrack");
+    if (!track) return;
+    const count = track.querySelectorAll(".review-slide").length;
+    const per = visible();
+    index = Math.min(index, Math.max(0, count - per));
+    track.style.transform = `translateX(-${(index * 100) / per}%)`;
+  }
+
+  function initCarousel() {
+    const track = document.getElementById("reviewTrack");
+    if (!track) return;
+    index = 0;
+    const count = track.querySelectorAll(".review-slide").length;
+    document.getElementById("prevReview")?.addEventListener("click", () => { index = Math.max(0, index - 1); render(); });
+    document.getElementById("nextReview")?.addEventListener("click", () => { index = Math.min(Math.max(0, count - visible()), index + 1); render(); });
+    render();
+  }
+
+  addEventListener("resize", render);
+  document.addEventListener("astro:page-load", initCarousel);
+</script>

@@ -1,0 +1,17 @@
+---
+import Reveal from "./Reveal";
+import { site } from "../data/site";
+---
+<section class="border-b border-slate-100 bg-white">
+  <Reveal client:visible className="max-w-7xl mx-auto px-5 py-7 grid grid-cols-2 lg:grid-cols-4 gap-5">
+    {site.trust.map((t) => (
+      <div data-reveal-item class="flex items-center gap-3">
+        <span class="h-10 w-10 rounded-full bg-mist grid place-items-center text-teal" aria-hidden="true">{t.icon}</span>
+        <div>
+          <p class="font-bold text-sm">{t.title}</p>
+          <p class="text-xs text-slate-500">{t.text}</p>
+        </div>
+      </div>
+    ))}
+  </Reveal>
+</section>
